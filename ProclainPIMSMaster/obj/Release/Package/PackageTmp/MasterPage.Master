@@ -1,0 +1,598 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="MasterPage.master.cs" Inherits="ProclainPIMSMaster.MasterPage" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Dashboard</title>
+    <style>
+        #loader {
+            transition: all .3s ease-in-out;
+            opacity: 1;
+            visibility: visible;
+            position: fixed;
+            height: 100vh;
+            width: 100%;
+            background: #fff;
+            z-index: 90000
+        }
+        
+        #loader.fadeOut {
+            opacity: 0;
+            visibility: hidden
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            top: calc(50% - 20px);
+            left: calc(50% - 20px);
+            background-color: #333;
+            border-radius: 100%;
+            -webkit-animation: sk-scaleout 1s infinite ease-in-out;
+            animation: sk-scaleout 1s infinite ease-in-out
+        }
+        
+        @-webkit-keyframes sk-scaleout {
+            0% {
+                -webkit-transform: scale(0)
+            }
+            100% {
+                -webkit-transform: scale(1);
+                opacity: 0
+            }
+        }
+        
+        @keyframes sk-scaleout {
+            0% {
+                -webkit-transform: scale(0);
+                transform: scale(0)
+            }
+            100% {
+                -webkit-transform: scale(1);
+                transform: scale(1);
+                opacity: 0
+            }
+        }
+
+
+   .page-titles 
+   {
+    padding: 0.9375rem 1.875rem;
+    background: #F3F3F9;
+    transition: all .2s ease;
+    }
+   .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+   .bgc-grey-200
+    {
+    background-color:#e8eaef!important;
+}
+   .card {
+    margin-bottom: 30px;
+    border: 0px;
+
+    border-radius: 0.625rem;
+    box-shadow:13px 16px 28px -13px #beb7e0; 
+        /*6px 11px 41px -28px #a99de7;*/
+}
+   .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25rem;
+}
+        
+        /*.header {
+            background-color: #006a9c!important;
+        }*/
+        .header .header-container .nav-left > li > a, .header .header-container .nav-right > li > a {
+            color: #ffffff !important;
+        }
+        .c-grey-901
+        {
+            color: #ffffff !important;
+
+        }
+        /*.c-grey-902
+        {
+            color: #006a9c;
+
+        }*/
+
+        
+        .sidebar-menu li a 
+        {
+            color: #0b5680!important;
+        }
+        /*.sidebar-logo a .logo-text {
+    color: #006a9c!important;
+
+}*/
+#UserSubmenu li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+    padding-left:50px;
+}
+
+#FeatureSubmenu li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+    padding-left:50px;
+}
+        .downarrow{
+    padding-left:30px;
+}
+.downarrowrep{
+    padding-left:70px;
+}
+/*#UserSubmenu:hover + #UserSubmenu{
+    display:block;
+}*/
+/*nav.dashboard-menu ul li.active a {
+color:#fff;
+background-color:#5fa2db;
+}*/
+
+.sidebar-menu>li>a:hover{
+   
+background-color:#d1d5db80;
+}
+.nav-right>li>a:hover{
+    background-color:#d1d5db80;
+}
+.border{
+    background-color:#4f66d5!important;
+}
+.but {
+  background-color: #ddd;
+  border: none;
+  color: black;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 16px;
+}
+
+.but:hover {
+  background-color: #f1f1f1;
+}
+.ti-home:before {
+    content: "\E69B";
+    color: #006a9c;
+}
+.ti-share:before {
+    content: "\E72E";
+    color: #006a9c;
+}
+.ti-calendar:before {
+    content: "\E6B6";
+    color: #006a9c;
+}
+.ti-user:before {
+    content: "\E602";
+    color: #006a9c;
+}
+.navblack 
+{
+      margin: 23px;
+}
+.actionnav:hover
+{
+  color:dodgerblue  !important;
+}
+    </style>
+    <style>
+
+</style>
+    <link href="UI/Style/style.css" rel="stylesheet"/>
+    <script src="../UI/DataTable/jquery-1.8.2.min.js"></script>
+    <link href="UI/DataTable/jquery.dataTables.min.css" rel="stylesheet" />
+    <script src="../UI/DataTable/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <asp:ContentPlaceHolder ID="head" runat="server">
+
+    </asp:ContentPlaceHolder>
+</head>
+<body class="app">
+    <form id="form1" runat="server">
+         <!-- @TOC -->
+    <!-- =================================================== -->
+    <!--
+      + @Page Loader
+      + @App Content
+          - #Left Sidebar
+              > $Sidebar Header
+              > $Sidebar Menu
+
+          - #Main
+              > $Topbar
+              > $App Screen Content
+    -->
+
+    <!-- @Page Loader -->
+    <!-- =================================================== -->
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+    <script type="4b6964157013fbb985339f43-text/javascript">
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            setTimeout(() => {
+                loader.classList.add('fadeOut');
+            }, 300);
+        });
+    </script>
+    <!-- =================================================== -->
+    <!-- @Page Loader End -->
+    <!-- =================================================== -->
+
+    <!-- =================================================== -->
+    <!--                    @App Content                     -->
+    <!-- =================================================== -->
+    <div>
+        <!-- ====================
+                 #Left Sidebar 
+             ==================== -->
+      <div class="sidebar">
+            <div class="sidebar-inner">
+                <!-- ========================================
+                            ### $Sidebar Header ###
+                     ======================================== -->
+                <div class="sidebar-logo" style="background-color: #d3d3d3;">
+                    <div class="peers ai-c fxw-nw">
+                        <div class="peer peer-greed">
+                            <a class="sidebar-link td-n" href="Default.aspx" class="td-n">
+                                <div class="peers ai-c fxw-nw">
+                                    <div class="peer">
+                                        <div class="logo">
+                                            <img src="../UI/assets/static/images/logo.png"  alt="" style = " padding-left: 5px; padding-top: 10px; padding-top: 15px;padding-right: 10px;width: 248px"/>
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="peer peer-greed">
+                                        <h5 class="lh-1 mB-0 c-grey-902 logo-text"><b></b></h5>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="peer">
+                            <div class="mobile-toggle sidebar-toggle">  
+                                <a href="" class="td-n">
+                                    <i class="ti-arrow-circle-left"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- ========================================
+                            ### $Sidebar Header End ###
+                     ======================================== -->
+                <!-- =======================
+                      ### $Sidebar Menu ###
+                     ======================= -->
+                <ul class="sidebar-menu scrollable pos-r" style="background-color:#d3d3d3">
+                    <li class="nav-item mT-30 active">
+                        <a class="sidebar-link" href="Default.aspx" >
+                            <span class="icon-holder">
+                                    <i class="c-blue-500 ti-home"></i>
+                                </span>
+                            <span class="title text-black">Dashboard</span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="sidebar-link" href="New_Suggestion.aspx">
+                            <span class="icon-holder">
+                                    <i class="c-blue-500 ti-share"></i>
+                                </span>
+                            <span class="title text-black">New Suggestion</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="sidebar-link" href="EmployeeTask.aspx">
+                            <span class="icon-holder">
+                                    <i class="c-blue-500 ti-calendar"></i>
+                                </span>
+                            <span class="title text-black">Task &nbsp;<span id="countcom" class="badge badge-pill badge-primary" runat="server">0</span></span>
+                        </a>
+                    </li>
+                    
+                    
+                    <%-- <li class="nav-item">
+                        <a class="sidebar-link" href="Main.aspx">
+                            <span class="icon-holder">
+                                    <i class="c-deep-orange-500 ti-user"></i>
+                                </span>
+                            <span class="title text-white">LogOut &nbsp;<span id="Span1" class="badge badge-pill badge-primary" runat="server"></span></span>
+                        </a>
+                    </li>--%>
+                   
+    
+   
+                    
+                </ul> 
+                <!-- ===========================
+                      ### $Sidebar Menu End ###
+                     =========================== -->
+            </div> 
+        </div> 
+        <!-- ====================
+              #Left Sidebar End
+             ==================== -->
+        <!-- =============================
+              #Page Heder - Body - Footer 
+             ============================= -->
+        <div class="page-container">
+            <!-- ====================
+                    ### $Topbar ### 
+                 ==================== -->
+            <div class="header navbar">
+          <div class="header-container" style="background-color: #d3d3d3;" >
+            <ul class="nav-left">
+              <li>
+                <a id='sidebar-toggle' class="sidebar-toggle"  href="javascript:void(0);">
+                  <i class="ti-menu" style="color:black;"></i>&nbsp;
+                    </a>
+              </li>
+
+            </ul>
+            <ul class="nav-right">
+              <li class="notifications dropdown">
+                
+
+                <ul class="dropdown-menu">
+                  <li class="pX-20 pY-15 bdB">
+                    <i class="ti-bell pR-10"></i>
+                    <span class="fsz-sm fw-600 c-grey-900">Notifications</span>
+                  </li>
+                  <li>
+                    <ul class="ovY-a pos-r scrollable lis-n p-0 m-0 fsz-sm">
+                      <li>
+                        <a href="" class='peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100'>
+                          <div class="peer mR-15">
+                            <img class="w-3r bdrs-50p" src="https://randomuser.me/api/portraits/men/1.jpg" alt="">
+                          </div>
+                          <div class="peer peer-greed">
+                            <span>
+                              <span class="fw-500">John Doe</span>
+                              <span class="c-grey-600">liked your <span class="text-dark">post</span>
+                              </span>
+                            </span>
+                            <p class="m-0">
+                              <small class="fsz-xs">5 mins ago</small>
+                            </p>
+                          </div>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="" class='peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100'>
+                          <div class="peer mR-15">
+                            <img class="w-3r bdrs-50p" src="https://randomuser.me/api/portraits/men/2.jpg" alt="">
+                          </div>
+                          <div class="peer peer-greed">
+                            <span>
+                              <span class="fw-500">Moo Doe</span>
+                              <span class="c-grey-600">liked your <span class="text-dark">cover image</span>
+                              </span>
+                            </span>
+                            <p class="m-0">
+                              <small class="fsz-xs">7 mins ago</small>
+                            </p>
+                          </div>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="" class='peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100'>
+                          <div class="peer mR-15">
+                            <img class="w-3r bdrs-50p" src="https://randomuser.me/api/portraits/men/3.jpg" alt="">
+                          </div>
+                          <div class="peer peer-greed">
+                            <span>
+                              <span class="fw-500">Lee Doe</span>
+                              <span class="c-grey-600">commented on your <span class="text-dark">video</span>
+                              </span>
+                            </span>
+                            <p class="m-0">
+                              <small class="fsz-xs">10 mins ago</small>
+                            </p>
+                          </div>
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="pX-20 pY-15 ta-c bdT">
+                    <span>
+                      <a href="" class="c-grey-600 cH-blue fsz-sm td-n">View All Notifications <i class="ti-angle-right fsz-xs mL-10"></i></a>
+                    </span>
+                  </li>
+                </ul>
+              </li>
+              <li class="notifications dropdown">
+               
+
+                <ul class="dropdown-menu">
+                  <li class="pX-20 pY-15 bdB">
+                    <i class="ti-email pR-10"></i>
+                    <span class="fsz-sm fw-600 c-grey-900">Emails</span>
+                  </li>
+                  <li>
+                    <ul class="ovY-a pos-r scrollable lis-n p-0 m-0 fsz-sm">
+                      <li>
+                        <a href="" class='peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100'>
+                          <div class="peer mR-15">
+                            <img class="w-3r bdrs-50p" src="https://randomuser.me/api/portraits/men/1.jpg" alt="">
+                          </div>
+                          <div class="peer peer-greed">
+                            <div>
+                              <div class="peers jc-sb fxw-nw mB-5">
+                                <div class="peer">
+                                  <p class="fw-500 mB-0">John Doe</p>
+                                </div>
+                                <div class="peer">
+                                  <small class="fsz-xs">5 mins ago</small>
+                                </div>
+                              </div>
+                              <span class="c-grey-600 fsz-sm">
+                                Want to create your own customized data generator for your app...
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="" class='peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100'>
+                          <div class="peer mR-15">
+                            <img class="w-3r bdrs-50p" src="https://randomuser.me/api/portraits/men/2.jpg" alt="">
+                          </div>
+                          <div class="peer peer-greed">
+                            <div>
+                              <div class="peers jc-sb fxw-nw mB-5">
+                                <div class="peer">
+                                  <p class="fw-500 mB-0">Moo Doe</p>
+                                </div>
+                                <div class="peer">
+                                  <small class="fsz-xs">15 mins ago</small>
+                                </div>
+                              </div>
+                              <span class="c-grey-600 fsz-sm">
+                                Want to create your own customized data generator for your app...
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="" class='peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100'>
+                          <div class="peer mR-15">
+                            <img class="w-3r bdrs-50p" src="https://randomuser.me/api/portraits/men/3.jpg" alt="">
+                          </div>
+                          <div class="peer peer-greed">
+                            <div>
+                              <div class="peers jc-sb fxw-nw mB-5">
+                                <div class="peer">
+                                  <p class="fw-500 mB-0">Lee Doe</p>
+                                </div>
+                                <div class="peer">
+                                  <small class="fsz-xs">25 mins ago</small>
+                                </div>
+                              </div>
+                              <span class="c-grey-600 fsz-sm">
+                                Want to create your own customized data generator for your app...
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="pX-20 pY-15 ta-c bdT">
+                    <span>
+                      <a href="email.html" class="c-grey-600 cH-blue fsz-sm td-n">View All Email <i class="fs-xs ti-angle-right mL-10"></i></a>
+                    </span>
+                  </li>
+                </ul>
+              </li>
+                <li class="dropdown">
+                <a href="" class="dropdown-toggle no-after peers fxw-nw ai-c lh-1 but " data-toggle="dropdown"> 
+                    <div class="peer mR-10">
+                    <Label  ForeColor="#ffffff" style="color:#0c0c0c; padding-right:-1px;font-size:15px; font-weight: bold;padding-top:6px; font-family:'Times New Roman', Times, serif;color:#086dc3" >Employee:</Label>
+            
+<%--                    <img class="w-2r bdrs-50p" src="../UI/assets/static/images/PIMSlogo.png" alt=""/>--%>
+                  </div>
+                     <div class="peer">
+                    <asp:Label ID="lblempname" runat="server" ForeColor="#ffffff" style="color:#0c0c0c; padding-right:50px;font-size:15px; font-weight: bold;padding-top:6px; font-family:'Times New Roman', Times, serif;color:black" />
+                </div>
+                        </a>
+                <ul class="dropdown-menu fsz-sm">
+                         <a class="sidebar-link" href="Main.aspx">
+                         <a class="dropdown-item" > <asp:Label ID="DBM_dashboard" Visible="false" Class="title text-black dropdown-item" runat="server" Text="<a class='title text-black navblack' href='DBM.aspx'>Admin</a> " ></asp:Label></a>
+                         <a class="dropdown-item" ><asp:Label ID="employee_dashboard" Visible="false" Class="title text-black" runat="server" Text="<a class='title text-black navblack' href='Default.aspx'> Employee</a>"></asp:Label></a>
+                         <a class="dropdown-item" ><asp:Label ID="Supervisor_dashboard" Visible="false" runat="server" class="title text-black" Text="<a class='title text-black navblack'   href='SupervisorMainDashboard.aspx'> Team Captain/Supervisor</a>"></asp:Label></a>
+                         <a class="dropdown-item" ><asp:Label ID="manager_Dashboard" Visible="false"  class="title text-black" runat="server" Text=" <a class='title text-black navblack' href='HODMainDashboard.aspx'> Manager </a>"></asp:Label></a>
+                         <a class="dropdown-item" ><asp:Label ID="hod_dashboard" Visible="false"  class="title text-black" runat="server" Text="<a class='title text-black navblack' href='HOSMainDashboard.aspx'> HOD </a>"></asp:Label></a>
+                         <a class="dropdown-item" ><asp:Label ID="hr_dashboard" Visible="false"  class="title text-black" runat="server" Text="<a class='title text-black navblack' href='BeneficiaryApprovalMainDashboard.aspx'> HR </a>"></asp:Label></a>
+                         <a class="dropdown-item" ><asp:Label ID="finance_dashboard" Visible="false" runat="server" class="title text-black" Text="<a class='title text-black navblack' href='FinanceDashboard.aspx'> Finance </a>"></asp:Label></a>
+                         <a class="dropdown-item title text-black actionnav" href="Main.aspx">LogOut</a>
+                            </ul>
+              </li>
+            
+            </ul>
+          </div>
+        </div>
+            <!-- =====================
+                  ### $Top bar End ### 
+                 ===================== -->
+            <div class="container-fluid bgc-grey-200" >
+             <main class="main-content bgc-grey-200">
+
+        
+             
+                 <div class="row page-titles mx-0">
+                <div class="col p-md-0">
+                    </div>
+                     </div>
+                 <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+
+                                    </asp:ContentPlaceHolder>
+
+                                </div></div></div></div>
+        
+        
+                 </main>
+                                
+                 
+            <!-- ========================================
+                       ### $App Screen Footer ### 
+                 ======================================== -->
+            <footer class="bdT ta-c p-30 lh-0 fsz-sm c-grey-600">
+                <span>
+                        Copyright © <%= DateTime.Now.Year %> Designed by <a href="http://www.binary2quantum.com/" target="_blank" title="c">Binary2Quantum Techbase</a>
+                        . All rights reserved.
+                    </span>
+                <script src="../UI/Script/js.js" type="4b6964157013fbb985339f43-text/javascript"></script>
+                <script type="4b6964157013fbb985339f43-text/javascript">
+                   
+                </script>
+            </footer>
+        </div>
+            </div>
+        <!-- ==================================
+              #Page Header - Body - Footer Ends
+             ================================== -->
+    </div>
+    <!-- =================================================== -->
+    <!--                    @App Content End                     -->
+    <!-- =================================================== -->
+    <script src="../UI/Script/analytics.js" type="4b6964157013fbb985339f43-text/javascript"></script>
+    <script type="4b6964157013fbb985339f43-text/javascript" src="../UI/Script/vendor.js"></script>
+    <script type="4b6964157013fbb985339f43-text/javascript" src="../UI/Script/bundle.js"></script>
+    <script src="../UI/Script/rocket-loader.min.js" data-cf-settings="4b6964157013fbb985339f43-|49" defer=""></script>
+   
+ 
+    </form>
+</body>
+</html>
